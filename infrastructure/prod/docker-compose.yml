@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      dockerfile: infrastructure/prod/dockerfiles/backend.Dockerfile
+      context: ../..
+      args:
+        SERVICE_PATH: ./backend
+        SERVICE_PORT: '3001'
+    ports:
+      - '3001:3001'
+    networks:
+      - backend
+
+  frontend:
+    build:
+      dockerfile: infrastructure/prod/dockerfiles/frontend.Dockerfile
+      context: ../..
+      args:
+        SERVICE_PATH: ./frontend
+        SERVICE_PORT: '3000'
+    ports:
+      - '3000:3000'
+    networks:
+      - backend
+
+networks:
+  backend:
+

@@ -1,5 +1,4 @@
-import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
-import httpStatus from 'http-status';
+import { FastifyInstance, FastifyRequest } from 'fastify';
 import { Repository } from '../repository/repository'
 
 interface QueryString {
@@ -63,7 +62,7 @@ export class Router {
       url: '/',
       schema: {
         querystring: {
-          limit: { type: 'integer',  minimum: 1, maximum: 10 }, // Aggiungi qui il parametro limit
+          limit: { type: 'integer',  minimum: 1 }, // Aggiungi qui il parametro limit
         },
         response: {
           200: {
