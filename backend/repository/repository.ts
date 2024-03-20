@@ -7,10 +7,11 @@ export class Repository {
     this.prisma = new PrismaClient()
   }
 
-  async getUsers(): Promise<list[]> {
-    return this.prisma.list.findMany()
+  async getUsers(limit: number): Promise<list[]> {
+    return this.prisma.list.findMany({
+      take: limit,
+    });
   }
-
   async insertUser(user: any): Promise<list> {
     return this.prisma.list.create({
       data: user,

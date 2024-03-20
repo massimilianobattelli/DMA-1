@@ -1,12 +1,12 @@
 // npx ts-node server.ts
 import fastify, { FastifyInstance } from 'fastify';
-import { Controller } from './controller/controller'
+import { Router } from './router/router';
 
-const app: FastifyInstance = fastify();
-new Controller(app)
+const server: FastifyInstance = fastify();
 
-// Avvio del server
-app.listen(3001, (err, address) => {
+new Router(server)
+
+server.listen(3001, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);
