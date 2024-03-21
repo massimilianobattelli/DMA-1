@@ -16,6 +16,13 @@ h3 {
   border-radius: 5px;
 }
 
+.Login {
+  display: contents;
+  input {
+    margin-left: 10px;
+  }
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
