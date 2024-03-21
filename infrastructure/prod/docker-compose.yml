@@ -1,25 +1,38 @@
 version: '3'
 
 services:
-  backend:
+  db:
     build:
-      dockerfile: infrastructure/prod/dockerfiles/backend.Dockerfile
-      context: ../..
-      args:
-        SERVICE_PATH: ./backend
-        SERVICE_PORT: '3001'
+      context: ../.. 
+      dockerfile: infrastructure/prod/dockerfiles/database.Dockerfile
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Max1
+      MYSQL_DATABASE: to_do
+    volumes:
+      - db_data:/var/lib/mysql
     ports:
-      - '3001:3001'
+      - "3307:3306"
     networks:
       - backend
 
+  backend:
+    build:
+      context: ../.. #path relativo a docker-compose file che indica da dove partire per trovare il dockerfile
+      dockerfile: infrastructure/prod/dockerfiles/backend.Dockerfile
+    ports:
+      - '3001:3001' #host:container
+    networks:
+      - backend
+    depends_on:
+      - db
+
   frontend:
     build:
-      dockerfile: infrastructure/prod/dockerfiles/frontend.Dockerfile
       context: ../..
-      args:
-        SERVICE_PATH: ./frontend
-        SERVICE_PORT: '3000'
+      dockerfile: infrastructure/prod/dockerfiles/frontend.Dockerfile
     ports:
       - '3000:3000'
     networks:
@@ -28,3 +41,5 @@ services:
 networks:
   backend:
 
+volumes:
+  db_data:

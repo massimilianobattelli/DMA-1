@@ -12,6 +12,7 @@ function App() {
 
   const fetchData = async () => {
     try {
+      //const response = await fetch('http://backend:3001/'); // Sostituisci con l'URL corretto del tuo backend
       const response = await fetch('http://localhost:3001/'); // Sostituisci con l'URL corretto del tuo backend
       const jsonData = await response.json();
       setData(jsonData);
