@@ -11,7 +11,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model list {
+model List {
   id   Int    @id @default(autoincrement())
   name String @db.VarChar(255)
 }
