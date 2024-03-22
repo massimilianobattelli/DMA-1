@@ -5,7 +5,6 @@ services:
     build:
       context: ../.. 
       dockerfile: infrastructure/prod/dockerfiles/database.Dockerfile
-    image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
