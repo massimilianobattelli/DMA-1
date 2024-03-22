@@ -5,6 +5,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import Home from './pages/Home';
 import Login from "./pages/Login";
+import './config/firebase-config';
 
 export default function App() {
   return (

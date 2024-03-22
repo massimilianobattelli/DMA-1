@@ -1,56 +1,78 @@
 import React, { useState } from 'react';
-import { initializeApp } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import '../App.css';
+import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/auth";
+import Tasks from "./components/list";
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyA2C13_mXSIZ4dxsBD0RXF0MJ6b2hTODWA",
-    authDomain: "dma-edfa3.firebaseapp.com",
-    projectId: "dma-edfa3",
-    storageBucket: "dma-edfa3.appspot.com",
-    messagingSenderId: "445216688257",
-    appId: "1:445216688257:web:5c074dbc7188862512e580"
-  };
   
-  const app = initializeApp(firebaseConfig);
 
+  const [authorizedUser,setAuthorizedUser] = useState(false || sessionStorage.getItem("accessToken"));
+
+  const provider = new GoogleAuthProvider();
   const auth = getAuth();
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // Signed in 
-      const user = userCredential.user;
-      navigate('/home');
-    } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.error('Error during authentication:', errorCode, errorMessage);
-    }
-  };
+  function signInwithGoogle() {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        // Access token of user
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        if(user){
+          user.getIdToken().then((tkn)=>{
+            // set access token in session storage
+            sessionStorage.setItem("accessToken", tkn);
+            setAuthorizedUser(true);
+          })
+        }
+        console.log(user);
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
+
+  function logoutUser(){
+    signOut(auth).then(() => {      
+      // clear session storage
+      sessionStorage.clear();
+      setAuthorizedUser(false);
+      // window.location.replace("/");
+      alert('Logged Out Successfully');
+    }).catch((error) => {
+      // An error happened.
+      alert(error);
+    });
+  }
 
   return (
     <div className="App">
-      <header className="App-header">
-        <form onSubmit={handleSubmit} className="Login">
-          <label>
-            Email:
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} required />
-          </label>
-          <label>
-            Password:
-            <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-          </label>
-          <button type="submit">Log in</button>
-        </form>
-      </header>
+     {authorizedUser ? (
+        <>
+          <p>Authorized user</p>
+          <h1>Tasks</h1>
+          <Tasks token={sessionStorage.getItem("accessToken")}/>
+          <button onClick={logoutUser}>Logout Button</button>
+        </>
+      ): (
+        <>
+      <button onClick={signInwithGoogle}>SignWithGoogle</button>
+        </>
+      )}
     </div>
   );
 }
